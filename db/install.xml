@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="question/type/truefalse/db" VERSION="20120123" COMMENT="XMLDB file for Moodle question/type/checkoff"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="question_checkoff" COMMENT="Data for TA Checkoff questions" NEXT="question_checkoff_refresh">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id." PREVIOUS="id" NEXT="inputmode"/>
+        <FIELD NAME="inputmode" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Determines the code input mode, which can be simple, like a code, or complex, like QR-scan." PREVIOUS="question" NEXT="codepairs"/>
+        <FIELD NAME="codepairs" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Code pair data, which associates random codes with TA checkoffs." PREVIOUS="inputmode"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
+        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="question_checkoff_refresh" COMMENT="Stores metadata indicating when a given checkoff question should request a page refresh" PREVIOUS="question_checkoff">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="quba"/>
+        <FIELD NAME="quba" TYPE="int" LENGTH="15" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="quba_key"/>
+        <KEY NAME="quba_key" TYPE="unique" FIELDS="quba" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
