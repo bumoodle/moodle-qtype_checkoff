@@ -59,3 +59,5 @@ $string['proctorresponse'] = 'Proctor Response:';
 
 //QR checkoff
 $string['qrsuccess'] = '{$a->firstname} {$a->lastname} checked off successfully!';
+
+$string['qrpleasewait'] = 'Just a moment while we check you off...';

@@ -46,6 +46,10 @@ class qtype_checkoff_renderer extends qtype_renderer
     const PREFIX = 'https://chart.googleapis.com/chart?chs=270x270&cht=qr&chld=|0&chl=';
     const QR_CHECKOFF_SUFFIX = '/checkoff.php';
 
+    //if this value is not an empty string (''), this value will be used instead of wwwroot
+    //(this is useful for sites with multiple urls, as they may have difficulty preserving proctor logins across cookie domains)
+    const OVERRIDE_WWWROOT = 'http://www.bumoodle.com';
+
 
     public function formulation_and_controls(question_attempt $qa, question_display_options $options)
     {
@@ -86,7 +90,7 @@ class qtype_checkoff_renderer extends qtype_renderer
         //if QR code entry is enabled, display the QR code
         if($question->inputmode == qtype_checkoff_input_mode::ANY || $question->inputmode == qtype_checkoff_input_mode::QR_CODE)
         {
-            $output .= html_writer::start_tag('div', array('style' => 'float: right; margin-left: 20px;'));
+            $output .= html_writer::start_tag('div', array('style' => 'float: right; margin-left: 20px;', 'class' => 'qrcode'));
             $output .= html_writer::tag('td', html_writer::empty_tag('img', array('src' => self::get_qr_code_link($qa))));
             $output .= html_writer::end_tag('div');
     
@@ -136,6 +140,8 @@ class qtype_checkoff_renderer extends qtype_renderer
         if ($qa->get_state() == question_state::$invalid) 
             $output .= html_writer::nonempty_tag('div', $question->get_validation_error($responsearray), array('class' => 'validationerror'));
 
+        //insert a hidden refresh message
+        $output .= $this->hidden_refresh_message();
 
         return $output;
     }
@@ -144,8 +150,17 @@ class qtype_checkoff_renderer extends qtype_renderer
     {
         global $CFG;
 
+        //if the OVERRIDE_WWWROOT option isn't being used, use the standard wwwroot
+        if(self::OVERRIDE_WWWROOT == '')
+            $url_prefix = $CFG->wwwroot;
+
+        //otherwise, use the overridden value
+        else
+            $url_prefix = self::OVERRIDE_WWWROOT;
+
+
         //determine the base URI for the backend check-off handler
-        $uri =  $CFG->wwwroot .'/'. get_string('pluginname_link', 'qtype_checkoff') . self::QR_CHECKOFF_SUFFIX;
+        $uri =  $url_prefix .'/'. get_string('pluginname_link', 'qtype_checkoff') . self::QR_CHECKOFF_SUFFIX;
 
         //create a new link to the plugin URI
         $target = new moodle_url($uri);
@@ -181,6 +196,33 @@ class qtype_checkoff_renderer extends qtype_renderer
         $PAGE->requires->js('/theme/mymobile/javascript/jquery-1.6.4.min.js');
 
         $PAGE->requires->js_init_call('M.autorefresh.init'); //, array(), false, $autorefresh_mod);
+    }
+
+    public function hidden_refresh_message()
+    {
+        global $CFG;
+
+        static $has_dimmed = false;
+
+        //start a new output buffer
+        $output = '';
+
+
+        //if the dimmer div has yet to be displayed, 
+        if(!$has_dimmed)
+        {
+            $output .= html_writer::tag('div', '&nbsp;', array('id' => 'dimmer'));
+            $has_dimmed = true;
+        }
+
+        $output .= html_writer::start_tag('div', array('class' => 'refreshpopup'));
+        $output .= html_writer::tag('p', get_string('qrpleasewait', 'qtype_checkoff'));
+        $output .= html_writer::tag('p', '');
+        $output .= html_writer::empty_tag('img', array('src' => $CFG->wwwroot . '/theme/image.php?image=loading&component=qtype_checkoff'));
+        $output .= html_writer::end_tag('div');
+        
+        return $output;
+
     }
 
 

@@ -1,0 +1,18 @@
+Proctor Checkoff question type for Moodle 2.1+
+Creates a simple "Instructor checkoff" point, where the student can recieve points for demonstrating a task to an instructor.
+
+Autored by Kyle Temkin, working for Binghamton University <http://www.binghamton.edu>
+
+At BU,  we use Moodle quizzes to grade lab assignments. This allows us a simple way for students to get credit for tasks such as demonstrating a circuit or explaining a concept to course staff.
+It could easily be used for a proctor check-off during a test; for example, to indicate that a proctor has verified a student's identity.
+
+To install Moodle 2.1+ using git, execute the following commands in the root of your Moodle install:
+
+    git clone git://github.com/ktemkin/moodle-qtype_checkoff.git question/type/checkoff
+    echo '/question/type/checkoff' >> .git/info/exclude
+
+Or, extract the following zip in your_moodle_root/question/type/:
+
+    https://github.com/ktemkin/moodle-qtype_scripted/zipball/checkoff
+
+
