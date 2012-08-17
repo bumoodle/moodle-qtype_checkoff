@@ -193,7 +193,7 @@ class qtype_checkoff_renderer extends qtype_renderer
         self::$refresh_enabled = true;
 
         $PAGE->requires->js('/question/type/checkoff/refresh.js.php?quba='.$quba_id); 
-        $PAGE->requires->js('/theme/mymobile/javascript/jquery-1.6.4.min.js');
+        $PAGE->requires->js('/local/jquery/scripts/jquery.js');
 
         $PAGE->requires->js_init_call('M.autorefresh.init'); //, array(), false, $autorefresh_mod);
     }
