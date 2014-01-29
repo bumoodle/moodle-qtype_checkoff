@@ -47,16 +47,14 @@ class qtype_checkoff_question extends question_graded_automatically
     /**
      * Shorthand for get_string which eases changing the question type's name.
      */
-    static function _s($s, $a = array())
-    {
+    static function _s($s, $a = array()) {
         return get_string($s, 'qtype_checkoff', $a);
     }
 
     /**
      * Starts a new question attempt, assigning the user a challenge/response from the pool.
      */
-    public function start_attempt(question_attempt_step $step, $variant)
-    {
+    public function start_attempt(question_attempt_step $step, $variant) {
         //get the array of code pairs for the question type, and store them in $pairs
         parse_str(str_replace('&amp;', '&', $this->codepairs), $pairs);
 
@@ -75,8 +73,7 @@ class qtype_checkoff_question extends question_graded_automatically
     /**
      * Restores attempt state from past transactions.
      */
-    public function apply_attempt_state(question_attempt_step $step)
-    {
+    public function apply_attempt_state(question_attempt_step $step) {
         //restore the challenge and correct response
         $this->challenge = $step->get_qt_var('_challenge');
         $this->correct_response = $step->get_qt_var('_correct_response');
@@ -85,19 +82,16 @@ class qtype_checkoff_question extends question_graded_automatically
     /**
      * Inidicates the response format expected by the question.
      */
-    public function get_expected_data() 
-    {
+    public function get_expected_data() {
         return array('answer' => PARAM_INTEGER);
     }
 
-    public function get_correct_response() 
-    {
+    public function get_correct_response() {
         return array('answer' => $this->correct_response);
     }
 
     
-    public function summarise_response(array $response) 
-    {
+    public function summarise_response(array $response) {
         //if no code has been entered, respond with "no code entered"
         if(!$this->is_complete_response($response))
             return self::_s('nocode');
@@ -112,39 +106,36 @@ class qtype_checkoff_question extends question_graded_automatically
     }
     
 
-    public function is_complete_response(array $response) 
-    {
-        return array_key_exists('answer', $response) and is_numeric($response['answer']);
+    public function is_complete_response(array $response) {
+        return array_key_exists('answer', $response); 
     }
 
-    public function is_gradable_response(array $response)
-    {
+    public function is_gradable_response(array $response) {
         return $this->is_complete_response($response);
     }
 
 
-    public function get_validation_error(array $response)
-    {
+    public function get_validation_error(array $response) {
         if ($this->is_gradable_response($response)) 
             return '';
         
         return self::_s('pleasentervalidcode');
     }
 
-    public function is_same_response(array $prevresponse, array $newresponse) 
-    {
+    public function is_same_response(array $prevresponse, array $newresponse) {
         return question_utils::arrays_same_at_key_missing_is_blank( $prevresponse, $newresponse, 'answer');
     }
 
-    public function grade_response(array $response) 
-    {
+    public function grade_response(array $response) {
         //if the entered answer is the correct response, award full marks
-        if($response['answer'] == $this->correct_response)
+        if($response['answer'] == $this->correct_response) {
             $fraction = 1;
+        }
 
         //otherwise, award no marks
-        else
+        else {
             $fraction = 0;
+        }
 
         //return the fraction, along with the correct state
         return array($fraction, question_state::graded_state_for_fraction($fraction));

@@ -48,24 +48,32 @@ $quba = question_engine::load_questions_usage_by_activity($quba_id);
 $question = $quba->get_question($slot);
 $qa = $quba->get_question_attempt($slot);
 
-//act as though the user had just submitted the correct response
-$quba->process_action($slot, array('answer' => $question->correct_response), time());
-$quba->finish_question($slot, time());
+//If the question isn't already finished, give it full marks and finish it.
+if(!$qa->get_state()->is_finished()) {
 
-//and save the result
-question_engine::save_questions_usage_by_activity($quba);
+    //act as though the user had just submitted the correct response
+    $quba->process_action($slot, array('answer' => $question->correct_response), time());
+    $quba->finish_question($slot, time());
+
+    //and save the result
+    question_engine::save_questions_usage_by_activity($quba);
+
+    //insert a refresh request for the given QUBA
+    $DB->insert_record('question_checkoff_refresh', (object)array('quba' => $quba_id), false);
+
+}
 
 //
-// Step 3: Queue a refresh, get the user information, and inform the grader of success
+// Step 3: Inform the grader of success.
 //
-
-//insert a refresh request for the given QUBA
-$DB->insert_record('question_checkoff_refresh', (object)array('quba' => $quba_id), false);
 
 //get information on the current user
-$user = $DB->get_record('user', array('id' => $attempt->userid), 'firstname,lastname');
+$user = $DB->get_record('user', array('id' => $attempt->userid), 'firstname,lastname,id,'.user_picture::fields());
 
 //inform the user of the success
+//TODO: Replace me with a renderer?
+echo $OUTPUT->user_picture($user, array('size' => 100));
+echo '<br/><br/>';
 echo get_string('qrsuccess', 'qtype_checkoff', $user);
 
 ?>

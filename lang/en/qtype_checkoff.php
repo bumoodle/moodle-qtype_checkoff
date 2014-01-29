@@ -56,8 +56,8 @@ $string['checkedoff'] = '<b><font color="#287A07">This item or assignment was ch
 $string['proctorcode'] = 'Proctor Code:';
 $string['proctorresponse'] = 'Proctor Response:';
 
-
 //QR checkoff
-$string['qrsuccess'] = '{$a->firstname} {$a->lastname} checked off successfully!';
-
+$string['qrsuccess'] = '<b>{$a->firstname} {$a->lastname}</b> checked off successfully!';
 $string['qrpleasewait'] = 'Just a moment while we check you off...';
+
+$string['checkoffnow'] = 'Check off now...';

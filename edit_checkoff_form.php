@@ -69,6 +69,8 @@ class qtype_checkoff_edit_form extends question_edit_form
 
         //and insert the code query as a silent argument
         $mform->addElement('hidden', 'codepairs', $codepairs);
+
+        $this->add_interactive_settings(); 
    }
 
     /**

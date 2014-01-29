@@ -48,6 +48,7 @@ class qtype_checkoff_renderer extends qtype_renderer
 
     //if this value is not an empty string (''), this value will be used instead of wwwroot
     //(this is useful for sites with multiple urls, as they may have difficulty preserving proctor logins across cookie domains)
+    //TODO: Abstract to config setting.
     const OVERRIDE_WWWROOT = 'http://www.bumoodle.com';
 
 
@@ -90,13 +91,7 @@ class qtype_checkoff_renderer extends qtype_renderer
         //if QR code entry is enabled, display the QR code
         if($question->inputmode == qtype_checkoff_input_mode::ANY || $question->inputmode == qtype_checkoff_input_mode::QR_CODE)
         {
-            $output .= html_writer::start_tag('div', array('style' => 'float: right; margin-left: 20px;', 'class' => 'qrcode'));
-            $output .= html_writer::tag('td', html_writer::empty_tag('img', array('src' => self::get_qr_code_link($qa))));
-            $output .= html_writer::end_tag('div');
-    
-            //attach a piece of javascript which allows us to auto-refresh on QR capture
-            self::attach_javacscript($qa->get_usage_id());
-
+            $output .= self::generate_qr_code_block($qa);
         }
 
         //
@@ -146,6 +141,32 @@ class qtype_checkoff_renderer extends qtype_renderer
         return $output;
     }
 
+    static function generate_qr_code_block($qa) {
+
+        global $USER;
+
+        $output  = html_writer::start_tag('div', array('style' => 'float: right; margin-left: 20px;', 'class' => 'qrcode'));
+        $output .= html_writer::tag('div', self::get_qr_code_image($qa));
+        //TODO: possibly accept user externally?
+
+
+        if(qtype_checkoff::can_perform_checkoff($qa, $USER)) {
+            $output .= html_writer::start_tag('div');
+            $output .= html_writer::link(self::get_qr_code_link($qa), get_string('checkoffnow', 'qtype_checkoff'), array('target' => '_blank'));
+            $output .= html_writer::end_tag('div');
+        }
+
+        $output .= html_writer::end_tag('div');
+
+
+
+        //attach a piece of javascript which allows us to auto-refresh on QR capture
+        self::attach_javacscript($qa->get_usage_id());
+
+        return $output;
+
+    }
+
     static function get_qr_code_link(question_attempt $qa)
     {
         global $CFG;
@@ -178,7 +199,16 @@ class qtype_checkoff_renderer extends qtype_renderer
         $target = str_replace('&amp;', '&', (string)$target);
 
         //return the full URL
-        return self::PREFIX . urlencode((string)$target); 
+        return $target; 
+    }
+
+    static function get_qr_code_image($qa) {
+
+        //Get the raw URL in encoded form, for use with the Google Charts API.
+        $url = self::PREFIX . urlencode((string)self::get_qr_code_link($qa));
+
+        //And return an image div for the given QR code.
+        return html_writer::empty_tag('img', array('src' => $url));
     }
 
     static function attach_javacscript($quba_id)

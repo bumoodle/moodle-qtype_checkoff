@@ -120,4 +120,21 @@ class qtype_checkoff extends question_type
         return str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
     }
 
+    /**
+     * Returns true iff the given user can check off the given question attempt.
+     * TODO: Migrate me, as appropriate.
+     */
+    public static function can_perform_checkoff($qa, $user = null) {
+        return has_capability('mod/quiz:grade', self::get_context_from_qa($qa), $user);
+    }
+
+    /**
+     * Returns the context that owns the given question attempt.
+     */
+    private static function get_context_from_qa($qa) {
+        //Get the owning context from the owning Question Usage By Activity.
+        $quba = question_engine::load_questions_usage_by_activity($qa->get_usage_id());
+        return $quba->get_owning_context();
+    }
+
 }

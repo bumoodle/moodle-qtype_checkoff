@@ -26,12 +26,12 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Provides the information to backup truefalse questions
+ * Provides the information to backup checkoff questions
  *
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_qtype_truefalse_plugin extends backup_qtype_plugin {
+class backup_qtype_checkoff_plugin extends backup_qtype_plugin {
 
     /**
      * Returns the qtype information to attach to question element
@@ -39,7 +39,7 @@ class backup_qtype_truefalse_plugin extends backup_qtype_plugin {
     protected function define_question_plugin_structure() {
 
         // Define the virtual plugin element with the condition to fulfill
-        $plugin = $this->get_plugin_element(null, '../../qtype', 'truefalse');
+        $plugin = $this->get_plugin_element(null, '../../qtype', 'checkoff');
 
         // Create one standard named plugin element (the visible container)
         $pluginwrapper = new backup_nested_element($this->get_recommended_name());
@@ -52,14 +52,14 @@ class backup_qtype_truefalse_plugin extends backup_qtype_plugin {
         $this->add_question_question_answers($pluginwrapper);
 
         // Now create the qtype own structures
-        $truefalse = new backup_nested_element('truefalse', array('id'), array(
+        $checkoff = new backup_nested_element('checkoff', array('id'), array(
             'trueanswer', 'falseanswer'));
 
         // Now the own qtype tree
-        $pluginwrapper->add_child($truefalse);
+        $pluginwrapper->add_child($checkoff);
 
         // set source to populate the data
-        $truefalse->set_source_table('question_truefalse',
+        $checkoff->set_source_table('question_checkoff',
                 array('question' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files

@@ -27,12 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * restore plugin class that provides the necessary information
- * needed to restore one truefalse qtype plugin
+ * needed to restore one checkoff qtype plugin
  *
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_qtype_truefalse_plugin extends restore_qtype_plugin {
+class restore_qtype_checkoff_plugin extends restore_qtype_plugin {
 
     /**
      * Returns the paths to be handled by the plugin at question level
@@ -45,17 +45,17 @@ class restore_qtype_truefalse_plugin extends restore_qtype_plugin {
         $this->add_question_question_answers($paths);
 
         // Add own qtype stuff
-        $elename = 'truefalse';
-        $elepath = $this->get_pathfor('/truefalse'); // we used get_recommended_name() so this works
+        $elename = 'checkoff';
+        $elepath = $this->get_pathfor('/checkoff'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths; // And we return the interesting paths
     }
 
     /**
-     * Process the qtype/truefalse element
+     * Process the qtype/checkoff element
      */
-    public function process_truefalse($data) {
+    public function process_checkoff($data) {
         global $DB;
 
         $data = (object)$data;
@@ -66,22 +66,22 @@ class restore_qtype_truefalse_plugin extends restore_qtype_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its question_truefalse too
+        // If the question has been created by restore, we need to create its question_checkoff too
         if ($questioncreated) {
             // Adjust some columns
             $data->question = $newquestionid;
             $data->trueanswer = $this->get_mappingid('question_answer', $data->trueanswer);
             $data->falseanswer = $this->get_mappingid('question_answer', $data->falseanswer);
             // Insert record
-            $newitemid = $DB->insert_record('question_truefalse', $data);
+            $newitemid = $DB->insert_record('question_checkoff', $data);
             // Create mapping
-            $this->set_mapping('question_truefalse', $oldid, $newitemid);
+            $this->set_mapping('question_checkoff', $oldid, $newitemid);
         }
     }
 
     /**
      * Given one question_states record, return the answer
-     * recoded pointing to all the restored stuff for truefalse questions
+     * recoded pointing to all the restored stuff for checkoff questions
      *
      * if not empty, answer is one question_answers->id
      */
