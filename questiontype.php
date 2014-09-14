@@ -77,6 +77,12 @@ class qtype_checkoff extends question_type
         return 0;
     }
 
+
+    public function save_question_options($question) {
+        parent::save_question_options($question);
+        $this->save_hints($question);
+    }
+
     //start ~ktemkin
     /**
      * Genereate a set of challenge/response pairs, which will be made known to a proctor,

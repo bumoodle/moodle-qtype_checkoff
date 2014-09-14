@@ -119,6 +119,13 @@ class qtype_checkoff_edit_form extends question_edit_form
         //encode the values as a HTTP query
         return http_build_query($codes);
     }
+
+
+    protected function data_preprocessing($question) {
+        $question = parent::data_preprocessing($question);
+        $question = $this->data_preprocessing_hints($question);
+        return $question;
+    }
    
     /**
      * Returns the question type's name.
