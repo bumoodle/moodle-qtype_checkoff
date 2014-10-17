@@ -55,13 +55,18 @@ if(!$qa->get_state()->is_finished()) {
     $quba->process_action($slot, array('answer' => $question->correct_response), time());
     $quba->finish_question($slot, time());
 
-    //and save the result
-    question_engine::save_questions_usage_by_activity($quba);
-
-    //insert a refresh request for the given QUBA
-    $DB->insert_record('question_checkoff_refresh', (object)array('quba' => $quba_id), false);
-
 }
+// If the question /is/ already finished, handle the grading as a Manual Grade.
+else {
+    $quba->manual_grade($slot, get_string('latecheckoff', 'qtype_checkoff'), $qa->get_max_mark());
+}
+
+// Save the results of our checkoff...
+question_engine::save_questions_usage_by_activity($quba);
+
+
+//insert a refresh request for the given QUBA
+$DB->insert_record('question_checkoff_refresh', (object)array('quba' => $quba_id), false);
 
 //
 // Step 3: Inform the grader of success.

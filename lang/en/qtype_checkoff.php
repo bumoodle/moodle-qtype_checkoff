@@ -61,3 +61,4 @@ $string['qrsuccess'] = '<b>{$a->firstname} {$a->lastname}</b> checked off succes
 $string['qrpleasewait'] = 'Just a moment while we check you off...';
 
 $string['checkoffnow'] = 'Check off now...';
+$string['latecheckoff'] = 'Checked off after the assignment had closed.';
